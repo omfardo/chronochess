@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ChronoChess - Master time, master chess. Battle through the ages with AI opponents.">
+<meta name="keywords" content="chess, chronochess, strategy game, AI chess, online chess">
+<meta property="og:title" content="ChronoChess - Master Time, Master Chess">
+<meta property="og:description" content="Battle through time with AI opponents. Epic atmosphere meets classic chess.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ChronoChess">
+<meta name="twitter:description" content="Master time, master chess. Play through the ages!">
+<title>ChronoChess - Master Time, Master Chess</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family: 'Georgia', serif;
+  background: #0a0604;
+  color: #c9a96e;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
+.hero{
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  animation: fadeIn 1.5s ease-in;
+}
+
+.hero-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+}
+
+.hero-content{
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  color: #fff;
+  animation: slideUp 1s ease-out 0.5s both;
+}
+
+.hero-content h1{
+  font-size: 5em;
+  font-weight: bold;
+  text-shadow: 0 0 30px rgba(201,169,110,0.8), 0 0 60px rgba(255,215,0,0.6);
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+}
+
+.hero-content p{
+  font-size: 2em;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255,215,0,0.8);
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+.btn-play{
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a0f08;
+  border: none;
+  padding: 20px 60px;
+  font-size: 1.8em;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50px;
+  box-shadow: 0 10px 40px rgba(255,215,0,0.5);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.btn-play:hover{
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 60px rgba(255,215,0,0.8);
+  background: linear-gradient(135deg, #FFA500, #FFD700);
+}
+
+.scroll-hint{
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  animation: bounce 2s infinite;
+  color: #FFD700;
+  font-size: 2em;
+}
+
+@keyframes fadeIn{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+@keyframes slideUp{
+  from{ opacity: 0; transform: translateY(50px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce{
+  0%, 20%, 50%, 80%, 100%{ transform: translateX(-50%) translateY(0); }
+  40%{ transform: translateX(-50%) translateY(-20px); }
+  60%{ transform: translateX(-50%) translateY(-10px); }
+}
+
+/* USER INFO BAR */
+.user-bar{
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 15px 20px;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.user-info{
+  color: #FFD700;
+  font-size: 16px;
+}
+
+.btn-logout{
+  background: #DC143C;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover{
+  background: #FF1744;
+  transform: scale(1.05);
+}
+
+/* LOGIN MODAL */
+.modal{
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active{
+  display: flex;
+}
+
+.modal-content{
+  background: linear-gradient(135deg, #2d1810 0%, #1a1208 100%);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 60px rgba(255,215,0,0.4);
+  border: 2px solid #8B7355;
+  max-width: 400px;
+  width: 90%;
+  animation: modalSlide 0.3s ease-out;
+}
+
+@keyframes modalSlide{
+  from{ opacity: 0; transform: translateY(-50px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.modal-content h2{
+  color: #FFD700;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 2em;
+  text-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+
+.input-group{
+  margin-bottom: 20px;
+}
+
+.input-group label{
+  display: block;
+  color: #c9a96e;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.input-group input{
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #8B7355;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  color: #FFD700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus{
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 10px rgba(255,215,0,0.3);
+}
+
+.btn-submit{
+  width: 100%;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #1a0f08;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-submit:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,215,0,0.6);
+}
+
+.modal-toggle{
+  text-align: center;
+  margin-top: 20px;
+  color: #c9a96e;
+  font-size: 14px;
+}
+
+.modal-toggle a{
+  color: #FFD700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.modal-toggle a:hover{
+  color: #FFA500;
+}
+
+.error-message{
+  color: #FF1744;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* GAME SECTION */
+.game-section{
+  min-height: 100vh;
+  background-image: url('textures/arena-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.game-section::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.game-section::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.1), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(255,255,255,0.08), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.06), transparent);
+  background-size: 200px 200px, 300px 300px, 150px 150px;
+  animation: dust 20s linear infinite;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+@keyframes dust{
+  0%{ background-position: 0 0, 0 0, 0 0; }
+  100%{ background-position: 200px 200px, -300px 300px, 150px -150px; }
+}
+
+.game-title{
+  font-size: 3em;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(201,169,110,0.5);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.controls{
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+button{
+  background: linear-gradient(135deg, #9370DB, #8A2BE2);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(147,112,219,0.4);
+}
+
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(147,112,219,0.6);
+}
+
+.difficulty-selector{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-difficulty{
+  background: linear-gradient(135deg, #696969, #505050);
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+.btn-difficulty.active{
+  background: linear-gradient(135deg, #32CD32, #228B22);
+  box-shadow: 0 0 20px rgba(50,205,50,0.6);
+}
+
+#status{
+  margin: 20px 0;
+  font-size: 24px;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255,215,0,0.5);
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+}
+
+#board-container{
+  perspective: 1200px;
+  filter: drop-shadow(0 20px 60px rgba(0,0,0,0.8));
+  position: relative;
+  z-index: 1;
+}
+
+#board{
+  border-collapse: collapse;
+  background: 
+    linear-gradient(45deg, rgba(139,115,85,0.2) 0%, transparent 100%),
+    radial-gradient(ellipse at center, rgba(255,215,0,0.1) 0%, transparent 70%);
+  box-shadow: 
+    0 0 80px rgba(255,215,0,0.4),
+    inset 0 0 100px rgba(0,0,0,0.6);
+  border: 6px solid #5c4a3a;
+  position: relative;
+  animation: boardGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes boardGlow{
+  from{ box-shadow: 0 0 60px rgba(255,215,0,0.3), inset 0 0 100px rgba(0,0,0,0.6); }
+  to{ box-shadow: 0 0 100px rgba(255,215,0,0.5), inset 0 0 100px rgba(0,0,0,0.6); }
+}
+
+#board td{
+  width: 95px;
+  height: 95px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+.light-square{
+  background-image: url('textures/light-square.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.15),
+    inset -2px -2px 4px rgba(255,255,255,0.1);
+}
+
+.dark-square{
+  background-image: url('textures/dark-square.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.3),
+    inset -2px -2px 4px rgba(255,255,255,0.05);
+}
+
+#board td:hover{
+  filter: brightness(1.15);
+  transform: scale(1.02);
+  z-index: 5;
+}
+
+.selected{
+  background: 
+    radial-gradient(ellipse at center, #FFD700 0%, #FFA500 100%) !important;
+  box-shadow: 
+    inset 0 0 30px rgba(255,215,0,0.8),
+    0 0 30px rgba(255,215,0,0.6) !important;
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse{
+  0%, 100%{ transform: scale(1); }
+  50%{ transform: scale(1.05); }
+}
+
+.unicode-piece{
+  font-size: 70px;
+  display: inline-block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.unicode-piece:hover{
+  filter: 
+    drop-shadow(0 10px 20px rgba(0,0,0,0.9))
+    drop-shadow(0 0 20px rgba(255,215,0,0.6));
+  transform: translateY(-6px) scale(1.12);
+}
+
+.white-piece{
+  color: #f5f5dc;
+  text-shadow: 
+    -2px -2px 4px #000, 2px -2px 4px #000, 
+    -2px 2px 4px #000, 2px 2px 4px #000,
+    0 0 15px rgba(255,255,255,0.6),
+    0 4px 8px rgba(0,0,0,0.5);
+}
+
+.black-piece{
+  color: #2c1810;
+  text-shadow: 
+    -2px -2px 3px #fff, 2px -2px 3px #fff, 
+    -2px 2px 3px #fff, 2px 2px 3px #fff,
+    0 0 10px rgba(255,215,0,0.3),
+    0 4px 8px rgba(0,0,0,0.6);
+}
+
+.ai-thinking{
+  color: #FFA500;
+  font-style: italic;
+  animation: thinking 1s infinite;
+}
+
+@keyframes thinking{
+  0%, 100%{ opacity: 1; }
+  50%{ opacity: 0.5; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px){
+  .hero-content h1{ font-size: 2.5em; }
+  .hero-content p{ font-size: 1.2em; }
+  .btn-play{ padding: 15px 40px; font-size: 1.2em; }
+  .game-title{ font-size: 2em; }
+  #board td{ width: 50px; height: 50px; }
+  .unicode-piece{ font-size: 38px; }
+  button{ padding: 10px 20px; font-size: 14px; }
+  .difficulty-selector{ flex-direction: column; width: 100%; }
+  .btn-difficulty{ width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- USER BAR -->
+<div class="user-bar" id="userBar" style="display:none;">
+  <span class="user-info" id="userInfo"></span>
+  <button class="btn-logout" onclick="logout()">Çıkış</button>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <h2 id="modalTitle">⏳ Giriş Yap</h2>
+    <div class="error-message" id="errorMessage"></div>
+    <form id="authForm" onsubmit="return false;">
+      <div class="input-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="username" required>
+      </div>
+      <div class="input-group">
+        <label>Şifre</label>
+        <input type="password" id="password" required>
+      </div>
+      <button class="btn-submit" id="submitBtn" onclick="handleAuth()">Giriş Yap</button>
+    </form>
+    <div class="modal-toggle">
+      <span id="toggleText">Hesabın yok mu?</span>
+      <a onclick="toggleAuthMode()">Kayıt Ol</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <img src="hero-image.jpg" alt="ChronoChess" class="hero-image">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>⏳ CHRONOCHESS ⏳</h1>
+    <p>Master Time. Master Chess.</p>
+    <button class="btn-play" onclick="scrollToGame()">▶ PLAY NOW</button>
+  </div>
+  <div class="scroll-hint">▼</div>
+</section>
+
+<!-- GAME SECTION -->
+<section class="game-section" id="game">
+  <h2 class="game-title">⏳ Battle Through Time ⏳</h2>
+  
+  <div class="difficulty-selector">
+    <button class="btn-difficulty active" data-level="easy" onclick="setDifficulty('easy')">😊 Kolay</button>
+    <button class="btn-difficulty" data-level="medium" onclick="setDifficulty('medium')">🤔 Orta</button>
+    <button class="btn-difficulty" data-level="hard" onclick="setDifficulty('hard')">😈 Zor</button>
+  </div>
+
+  <div class="controls">
+    <button id="btn-yeni" onclick="yeniOyun()">⚔️ Yeni Oyun</button>
+  </div>
+
+  <div id="status">Beyazın sırası!</div>
+
+  <div id="board-container">
+    <table id="board"></table>
+  </div>
+</section>
+
+<script>
+// ========== GLOBAL VARIABLES ==========
+var W='w',B='b';
+var tahta=[];
+var secilenKare=null;
+var simdikiSira=W;
+var aiDifficulty='easy'; // easy, medium, hard
+var aiThinking=false;
+var currentUser=null;
+var isAuthMode='login'; // login or register
+
+var UNICODE={
+  w:{K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞',P:'♟'},
+  b:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙'}
+};
+
+var PIECE_VALUES={
+  P:100, N:320, B:330, R:500, Q:900, K:20000
+};
+
+var PIECE_SQUARE_TABLES={
+  P:[ // Pawn
+    0,  0,  0,  0,  0,  0,  0,  0,
+    50, 50, 50, 50, 50, 50, 50, 50,
+    10, 10, 20, 30, 30, 20, 10, 10,
+    5,  5, 10, 25, 25, 10,  5,  5,
+    0,  0,  0, 20, 20,  0,  0,  0,
+    5, -5,-10,  0,  0,-10, -5,  5,
+    5, 10, 10,-20,-20, 10, 10,  5,
+    0,  0,  0,  0,  0,  0,  0,  0
+  ],
+  N:[ // Knight
+    -50,-40,-30,-30,-30,-30,-40,-50,
+    -40,-20,  0,  0,  0,  0,-20,-40,
+    -30,  0, 10, 15, 15, 10,  0,-30,
+    -30,  5, 15, 20, 20, 15,  5,-30,
+    -30,  0, 15, 20, 20, 15,  0,-30,
+    -30,  5, 10, 15, 15, 10,  5,-30,
+    -40,-20,  0,  5,  5,  0,-20,-40,
+    -50,-40,-30,-30,-30,-30,-40,-50
+  ],
+  B:[ // Bishop
+    -20,-10,-10,-10,-10,-10,-10,-20,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -10,  0,  5, 10, 10,  5,  0,-10,
+    -10,  5,  5, 10, 10,  5,  5,-10,
+    -10,  0, 10, 10, 10, 10,  0,-10,
+    -10, 10, 10, 10, 10, 10, 10,-10,
+    -10,  5,  0,  0,  0,  0,  5,-10,
+    -20,-10,-10,-10,-10,-10,-10,-20
+  ],
+  R:[ // Rook
+    0,  0,  0,  0,  0,  0,  0,  0,
+    5, 10, 10, 10, 10, 10, 10,  5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    0,  0,  0,  5,  5,  0,  0,  0
+  ],
+  Q:[ // Queen
+    -20,-10,-10, -5, -5,-10,-10,-20,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -10,  0,  5,  5,  5,  5,  0,-10,
+    -5,  0,  5,  5,  5,  5,  0, -5,
+    0,  0,  5,  5,  5,  5,  0, -5,
+    -10,  5,  5,  5,  5,  5,  0,-10,
+    -10,  0,  5,  0,  0,  0,  0,-10,
+    -20,-10,-10, -5, -5,-10,-10,-20
+  ],
+  K:[ // King
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -20,-30,-30,-40,-40,-30,-30,-20,
+    -10,-20,-20,-20,-20,-20,-20,-10,
+    20, 20,  0,  0,  0,  0, 20, 20,
+    20, 30, 10,  0,  0, 10, 30, 20
+  ]
+};
+
+// ========== AUTH FUNCTIONS ==========
+function checkAuth(){
+  var user=localStorage.getItem('chronoUser');
+  if(user){
+    currentUser=JSON.parse(user);
+    document.getElementById('userBar').style.display='flex';
+    document.getElementById('userInfo').textContent='👤 '+currentUser.username;
+    document.getElementById('loginModal').classList.remove('active');
+  }else{
+    document.getElementById('loginModal').classList.add('active');
+  }
+}
+
+function toggleAuthMode(){
+  isAuthMode=(isAuthMode==='login')?'register':'login';
+  if(isAuthMode==='login'){
+    document.getElementById('modalTitle').textContent='⏳ Giriş Yap';
+    document.getElementById('submitBtn').textContent='Giriş Yap';
+    document.getElementById('toggleText').textContent='Hesabın yok mu? ';
+    document.querySelector('.modal-toggle a').textContent='Kayıt Ol';
+  }else{
+    document.getElementById('modalTitle').textContent='⏳ Kayıt Ol';
+    document.getElementById('submitBtn').textContent='Kayıt Ol';
+    document.getElementById('toggleText').textContent='Zaten hesabın var mı? ';
+    document.querySelector('.modal-toggle a').textContent='Giriş Yap';
+  }
+  document.getElementById('errorMessage').textContent='';
+}
+
+function handleAuth(){
+  var username=document.getElementById('username').value.trim();
+  var password=document.getElementById('password').value;
+  var errorMsg=document.getElementById('errorMessage');
+  
+  if(!username || !password){
+    errorMsg.textContent='Lütfen tüm alanları doldurun!';
+    return;
+  }
+  
+  if(isAuthMode==='register'){
+    // Register
+    var users=JSON.parse(localStorage.getItem('chronoUsers')||'{}');
+    if(users[username]){
+      errorMsg.textContent='Bu kullanıcı adı zaten alınmış!';
+      return;
+    }
+    users[username]={password:password, wins:0, losses:0, draws:0};
+    localStorage.setItem('chronoUsers',JSON.stringify(users));
+    localStorage.setItem('chronoUser',JSON.stringify({username:username}));
+    currentUser={username:username};
+    checkAuth();
+    yeniOyun();
+  }else{
+    // Login
+    var users=JSON.parse(localStorage.getItem('chronoUsers')||'{}');
+    if(!users[username] || users[username].password!==password){
+      errorMsg.textContent='Kullanıcı adı veya şifre hatalı!';
+      return;
+    }
+    localStorage.setItem('chronoUser',JSON.stringify({username:username}));
+    currentUser={username:username};
+    checkAuth();
+    yeniOyun();
+  }
+}
+
+function logout(){
+  localStorage.removeItem('chronoUser');
+  currentUser=null;
+  document.getElementById('userBar').style.display='none';
+  document.getElementById('loginModal').classList.add('active');
+}
+
+// ========== GAME FUNCTIONS ==========
+function scrollToGame(){
+  document.getElementById('game').scrollIntoView({behavior:'smooth'});
+}
+
+function setDifficulty(level){
+  aiDifficulty=level;
+  document.querySelectorAll('.btn-difficulty').forEach(function(btn){
+    btn.classList.remove('active');
+  });
+  document.querySelector('.btn-difficulty[data-level="'+level+'"]').classList.add('active');
+}
+
+function tasHTML(tas){
+  var cls='unicode-piece '+(tas.r===W?'white-piece':'black-piece');
+  return '<span class="'+cls+'">'+UNICODE[tas.r][tas.t]+'</span>';
+}
+
+function tahtaBaslat(){
+  tahta=[];
+  for(var i=0;i<8;i++){
+    tahta[i]=[];
+    for(var j=0;j<8;j++) tahta[i][j]=null;
+  }
+  
+  var sira=['R','N','B','Q','K','B','N','R'];
+  for(var j=0;j<8;j++){
+    tahta[0][j]={t:sira[j],r:B};
+    tahta[1][j]={t:'P',r:B};
+    tahta[6][j]={t:'P',r:W};
+    tahta[7][j]={t:sira[j],r:W};
+  }
+  
+  simdikiSira=W;
+  secilenKare=null;
+  aiThinking=false;
+}
+
+function tahtaCiz(){
+  var html='';
+  for(var i=0;i<8;i++){
+    html+='<tr>';
+    for(var j=0;j<8;j++){
+      var renk=(i+j)%2===0?'light-square':'dark-square';
+      var tas=tahta[i][j];
+      var icerik=tas?tasHTML(tas):'';
+      html+='<td class="'+renk+'" data-s="'+i+'" data-su="'+j+'">'+icerik+'</td>';
+    }
+    html+='</tr>';
+  }
+  document.getElementById('board').innerHTML=html;
+  
+  var cells=document.querySelectorAll('#board td');
+  cells.forEach(function(cell){
+    cell.addEventListener('click',function(){
+      if(aiThinking) return;
+      var s=parseInt(this.getAttribute('data-s'));
+      var su=parseInt(this.getAttribute('data-su'));
+      kareTiklandi(s,su);
+    });
+  });
+}
+
+function kareTiklandi(s,su){
+  var tas=tahta[s][su];
+  
+  if(secilenKare){
+    if(s===secilenKare.s && su===secilenKare.su){
+      secilenKare=null;
+    }else if(gecerliMi(secilenKare.s,secilenKare.su,s,su)){
+      tahta[s][su]=tahta[secilenKare.s][secilenKare.su];
+      tahta[secilenKare.s][secilenKare.su]=null;
+      simdikiSira=(simdikiSira===W)?B:W;
+      secilenKare=null;
+      tahtaCiz();
+      updateStatus();
+      
+      // AI move after 500ms
+      if(simdikiSira===B){
+        setTimeout(aiHamle,500);
+      }
+      return;
+    }else{
+      secilenKare=null;
+    }
+  }
+  
+  if(tas && tas.r===simdikiSira){
+    secilenKare={s:s,su:su};
+    tahtaCiz();
+    var board=document.getElementById('board');
+    board.rows[s].cells[su].classList.add('selected');
+  }else{
+    tahtaCiz();
+  }
+}
+
+function updateStatus(){
+  if(simdikiSira===W){
+    document.getElementById('status').textContent='Beyazın sırası!';
+    document.getElementById('status').classList.remove('ai-thinking');
+  }else{
+    document.getElementById('status').textContent='AI düşünüyor...';
+    document.getElementById('status').classList.add('ai-thinking');
+  }
+}
+
+function gecerliMi(s1,su1,s2,su2){
+  if(s1===s2 && su1===su2) return false;
+  
+  var tas=tahta[s1][su1];
+  var hedef=tahta[s2][su2];
+  
+  if(!tas) return false;
+  if(hedef && hedef.r===tas.r) return false;
+  
+  var ds=s2-s1;
+  var dsu=su2-su1;
+  var ads=Math.abs(ds);
+  var adsu=Math.abs(dsu);
+  
+  // Pawn
+  if(tas.t==='P'){
+    if(tas.r===W){
+      if(ds===-1 && dsu===0 && !hedef) return true;
+      if(s1===6 && ds===-2 && dsu===0 && !hedef && !tahta[5][su1]) return true;
+      if(ds===-1 && adsu===1 && hedef) return true;
+    }else{
+      if(ds===1 && dsu===0 && !hedef) return true;
+      if(s1===1 && ds===2 && dsu===0 && !hedef && !tahta[2][su1]) return true;
+      if(ds===1 && adsu===1 && hedef) return true;
+    }
+    return false;
+  }
+  
+  // Knight
+  if(tas.t==='N'){
+    return (ads===2 && adsu===1)||(ads===1 && adsu===2);
+  }
+  
+  // King
+  if(tas.t==='K'){
+    return ads<=1 && adsu<=1;
+  }
+  
+  // Check path for sliding pieces (Rook, Bishop, Queen)
+  var dirS=ds===0?0:(ds>0?1:-1);
+  var dirSu=dsu===0?0:(dsu>0?1:-1);
+  
+  // Rook
+  if(tas.t==='R'){
+    if(ds!==0 && dsu!==0) return false;
+    var curS=s1+dirS;
+    var curSu=su1+dirSu;
+    while(curS!==s2 || curSu!==su2){
+      if(tahta[curS][curSu]) return false;
+      curS+=dirS;
+      curSu+=dirSu;
+    }
+    return true;
+  }
+  
+  // Bishop
+  if(tas.t==='B'){
+    if(ads!==adsu) return false;
+    var curS=s1+dirS;
+    var curSu=su1+dirSu;
+    while(curS!==s2 || curSu!==su2){
+      if(tahta[curS][curSu]) return false;
+      curS+=dirS;
+      curSu+=dirSu;
+    }
+    return true;
+  }
+  
+  // Queen
+  if(tas.t==='Q'){
+    if(ds!==0 && dsu!==0 && ads!==adsu) return false;
+    var curS=s1+dirS;
+    var curSu=su1+dirSu;
+    while(curS!==s2 || curSu!==su2){
+      if(tahta[curS][curSu]) return false;
+      curS+=dirS;
+      curSu+=dirSu;
+    }
+    return true;
+  }
+  
+  return false;
+}
+
+function yeniOyun(){
+  tahtaBaslat();
+  tahtaCiz();
+  document.getElementById('status').textContent='Yeni oyun başladı! ⚔️';
+  setTimeout(function(){
+    updateStatus();
+  },1500);
+}
+
+// ========== AI FUNCTIONS ==========
+function aiHamle(){
+  if(simdikiSira!==B || aiThinking) return;
+  
+  aiThinking=true;
+  updateStatus();
+  
+  setTimeout(function(){
+    var moves=getAllMoves(B);
+    
+    if(moves.length===0){
+      aiThinking=false;
+      updateStatus();
+      return;
+    }
+    
+    var bestMove=null;
+    
+    // Easy: Random move (with slight preference for captures)
+    if(aiDifficulty==='easy'){
+      var captureMoves=[];
+      for(var i=0;i<moves.length;i++){
+        if(tahta[moves[i].s2][moves[i].su2]){
+          captureMoves.push(moves[i]);
+        }
+      }
+      if(captureMoves.length>0 && Math.random()>0.5){
+        bestMove=captureMoves[Math.floor(Math.random()*captureMoves.length)];
+      }else{
+        bestMove=moves[Math.floor(Math.random()*moves.length)];
+      }
+    }
+    // Medium & Hard: Use minimax
+    else{
+      var depth=(aiDifficulty==='medium')?2:3;
+      bestMove=findBestMove(depth);
+      if(!bestMove){
+        bestMove=moves[Math.floor(Math.random()*moves.length)];
+      }
+    }
+    
+    if(bestMove){
+      tahta[bestMove.s2][bestMove.su2]=tahta[bestMove.s1][bestMove.su1];
+      tahta[bestMove.s1][bestMove.su1]=null;
+      simdikiSira=W;
+      aiThinking=false;
+      tahtaCiz();
+      updateStatus();
+    }
+  },500);
+}
+
+function findBestMove(depth){
+  var moves=getAllMoves(B);
+  if(moves.length===0) return null;
+  
+  var bestMoves=[];
+  var bestScore=-Infinity;
+  
+  for(var i=0;i<moves.length;i++){
+    var move=moves[i];
+    var captured=tahta[move.s2][move.su2];
+    
+    // Make move
+    tahta[move.s2][move.su2]=tahta[move.s1][move.su1];
+    tahta[move.s1][move.su1]=null;
+    
+    var score=-minimax(depth-1,W,-Infinity,Infinity);
+    
+    // Undo move
+    tahta[move.s1][move.su1]=tahta[move.s2][move.su2];
+    tahta[move.s2][move.su2]=captured;
+    
+    if(score>bestScore){
+      bestScore=score;
+      bestMoves=[move];
+    }else if(score===bestScore){
+      bestMoves.push(move);
+    }
+  }
+  
+  // Random choice among best moves
+  return bestMoves[Math.floor(Math.random()*bestMoves.length)];
+}
+
+function minimax(depth,color,alpha,beta){
+  if(depth===0){
+    return evaluateBoard();
+  }
+  
+  var moves=getAllMoves(color);
+  if(moves.length===0){
+    return color===B ? -10000 : 10000;
+  }
+  
+  if(color===B){
+    var maxEval=-Infinity;
+    
+    for(var i=0;i<moves.length;i++){
+      var move=moves[i];
+      var captured=tahta[move.s2][move.su2];
+      
+      tahta[move.s2][move.su2]=tahta[move.s1][move.su1];
+      tahta[move.s1][move.su1]=null;
+      
+      var ev=minimax(depth-1,W,alpha,beta);
+      
+      tahta[move.s1][move.su1]=tahta[move.s2][move.su2];
+      tahta[move.s2][move.su2]=captured;
+      
+      maxEval=Math.max(maxEval,ev);
+      alpha=Math.max(alpha,ev);
+      if(beta<=alpha) break;
+    }
+    return maxEval;
+  }else{
+    var minEval=Infinity;
+    
+    for(var i=0;i<moves.length;i++){
+      var move=moves[i];
+      var captured=tahta[move.s2][move.su2];
+      
+      tahta[move.s2][move.su2]=tahta[move.s1][move.su1];
+      tahta[move.s1][move.su1]=null;
+      
+      var ev=minimax(depth-1,B,alpha,beta);
+      
+      tahta[move.s1][move.su1]=tahta[move.s2][move.su2];
+      tahta[move.s2][move.su2]=captured;
+      
+      minEval=Math.min(minEval,ev);
+      beta=Math.min(beta,ev);
+      if(beta<=alpha) break;
+    }
+    return minEval;
+  }
+}
+
+function getAllMoves(color){
+  var moves=[];
+  for(var i=0;i<8;i++){
+    for(var j=0;j<8;j++){
+      var tas=tahta[i][j];
+      if(tas && tas.r===color){
+        for(var ti=0;ti<8;ti++){
+          for(var tj=0;tj<8;tj++){
+            if(gecerliMi(i,j,ti,tj)){
+              moves.push({s1:i,su1:j,s2:ti,su2:tj});
+            }
+          }
+        }
+      }
+    }
+  }
+  return moves;
+}
+
+function evaluateBoard(){
+  var score=0;
+  for(var i=0;i<8;i++){
+    for(var j=0;j<8;j++){
+      var tas=tahta[i][j];
+      if(tas){
+        var pieceValue=PIECE_VALUES[tas.t];
+        var pos=i*8+j;
+        var posValue=0;
+        
+        if(PIECE_SQUARE_TABLES[tas.t]){
+          if(tas.r===W){
+            posValue=PIECE_SQUARE_TABLES[tas.t][63-pos];
+          }else{
+            posValue=PIECE_SQUARE_TABLES[tas.t][pos];
+          }
+        }
+        
+        var totalValue=pieceValue+posValue;
+        
+        if(tas.r===B){
+          score+=totalValue;
+        }else{
+          score-=totalValue;
+        }
+      }
+    }
+  }
+  return score;
+}
+
+// ========== INIT ==========
+window.onload=function(){
+  checkAuth();
+  if(currentUser){
+    yeniOyun();
+  }
+};
+</script>
+
+</body>
+</html>
